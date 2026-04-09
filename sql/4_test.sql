@@ -16,14 +16,13 @@ SELECT DISTINCT
     c.email,
     c.first_name,
     c.last_name,
-    pc.pet_category as category,
-    fs.total_price 
+    pc.pet_category as category
 FROM fact_sale fs
 JOIN dim_customer c ON fs.customer_id = c.customer_id
 JOIN dim_product p ON fs.product_id = p.product_id
 JOIN dim_product_category pc ON p.category_id = pc.category_id
 WHERE pc.pet_category = 'Dogs'
-ORDER BY fs.total_price DESC, c.email;
+ORDER BY c.email;
 
 -- Просто вывод таблицы фактов
 SELECT * FROM fact_sale;

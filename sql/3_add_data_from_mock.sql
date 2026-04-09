@@ -1,5 +1,4 @@
 BEGIN;
-
 -- заполняем локациями из 4х источников(покупатели, магазины, поставщики, продавцы)
 INSERT INTO dim_location (country, postal_code, city, state)
 SELECT DISTINCT country, postal_code, city, state
@@ -44,10 +43,11 @@ FROM (
 ) t;
 
 -- питомцы с породами
-INSERT INTO dim_pet (type, breed)
+INSERT INTO dim_pet (type, breed, pet_name)
 SELECT DISTINCT
     customer_pet_type,
-    customer_pet_breed
+    customer_pet_breed,
+    customer_pet_name
 FROM mock_data
 WHERE customer_pet_type IS NOT NULL;
 
@@ -58,8 +58,7 @@ INSERT INTO dim_customer (
     age,
     email,
     location_id,
-    pet_id,
-    pet_name
+    pet_id
 )
 SELECT DISTINCT
     m.customer_first_name,
@@ -67,8 +66,7 @@ SELECT DISTINCT
     m.customer_age,
     m.customer_email,
     l.location_id,
-    p.pet_id,
-    m.customer_pet_name
+    p.pet_id
 FROM mock_data m
 LEFT JOIN dim_location l 
     ON m.customer_country = l.country 
@@ -78,6 +76,7 @@ LEFT JOIN dim_location l
 LEFT JOIN dim_pet p 
     ON m.customer_pet_type = p.type 
     AND m.customer_pet_breed = p.breed
+    AND m.customer_pet_name = p.pet_name
 WHERE m.customer_email IS NOT NULL;
 
 -- продавцы
@@ -199,8 +198,7 @@ INSERT INTO fact_sale (
     supplier_id,
     date,
     price,
-    quantity,
-    total_price
+    quantity
 )
 SELECT DISTINCT
     c.customer_id,
@@ -210,15 +208,13 @@ SELECT DISTINCT
     sp.supplier_id,
     m.sale_date,
     m.product_price,
-    m.sale_quantity,
-    m.sale_total_price
+    m.sale_quantity
 FROM mock_data m
 LEFT JOIN dim_customer c ON
     c.email = m.customer_email
     AND c.first_name = m.customer_first_name
     AND c.last_name = m.customer_last_name
     AND c.age = m.customer_age
-    AND c.pet_name = m.customer_pet_name
 LEFT JOIN dim_seller s ON
     s.email = m.seller_email
     AND s.first_name = m.seller_first_name

@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS dim_location (
 CREATE TABLE IF NOT EXISTS dim_pet (
     pet_id BIGSERIAL PRIMARY KEY,
     TYPE VARCHAR(50),
-    breed VARCHAR(50)
+    breed VARCHAR(50),
+    pet_name VARCHAR(50)
 );
 -- покупатели
 CREATE TABLE IF NOT EXISTS dim_customer (
@@ -21,8 +22,7 @@ CREATE TABLE IF NOT EXISTS dim_customer (
     age INT,
     email VARCHAR(50),
     location_id BIGINT REFERENCES dim_location(location_id),
-    pet_id BIGINT REFERENCES dim_pet(pet_id),
-    pet_name VARCHAR(50)
+    pet_id BIGINT REFERENCES dim_pet(pet_id)
 );
 -- продавцы
 CREATE TABLE IF NOT EXISTS dim_seller (
@@ -84,8 +84,7 @@ CREATE TABLE IF NOT EXISTS fact_sale (
     supplier_id BIGINT REFERENCES dim_supplier(supplier_id),
     date VARCHAR(50),
     price float4,
-    quantity INT,
-    total_price NUMERIC(10, 2)
+    quantity INT
 );
 
 COMMIT;
